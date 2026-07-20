@@ -1,12 +1,15 @@
 // Define all helper functions for hw1 in this file
+
 #include "helpers1.h"
 #include <map>
+
+const int MAX_ASCII = 127;
 
 int countLines(std::istream& in){
     char c;
     int total = 0;
     while(in.get(c)){
-        if( c < 0 || c > 127){
+        if( c < 0 || c > MAX_ASCII){
             break;
         }
         if(c =='\n'){
@@ -15,67 +18,66 @@ int countLines(std::istream& in){
     }
     return total;
 }
-
 int countTotalSymbols(std::istream& in, bool verbose){
-    std::map<char, int> times;
+    std::map<char, int> symbolCounts;
     char c;
     int total = 0 ;
     while(in.get(c)){
-        if(c < 0 || c > 127){
+        if(c < 0 || c > MAX_ASCII){
             break;
         }
         else if(!isalnum(c) && c >= 0x21 && c <= 0x7E){
             total++;
-            times[c]++;
+            if (verbose){
+                symbolCounts[c]++;
+            }
         }
     }
     if (verbose){
-        for (auto item: times){
+        for (auto item: symbolCounts){
             std::cerr<<item.first << ' '<<item.second<<std::endl;
         }
     }
     return total;
 }
-
 int countNumberOccur(std::istream& in, bool verbose){
     char c;
     int total = 0;
     bool inNumber = false;
-    std::string current = "";
+    std::string currentNumber = "";
     while(in.get(c)){
-        if(c <0 || c > 127){
+        if(c <0 || c > MAX_ASCII){
             break;
         }
         if(isdigit(c)){
             inNumber = true;
-            current += c;
+            currentNumber += c;
         }
         else{
             if(inNumber){
                 total++;
                 inNumber = false;
                 if(verbose){
-                    std::cerr << current <<std::endl;
+                    std::cerr << currentNumber <<std::endl;
                 }
-                current = "";
+                currentNumber = "";
             }
         }
     }
     if(inNumber){
         total++;
         if( verbose){
-            std::cerr << current << std::endl;
+            std::cerr << currentNumber << std::endl;
         }
     }
     return total;
 }
-
 int contractSpaces(std::istream& in, int numSpaces){
     char c;
     int total = 0;
     int spaceCount = 0;
     while(in.get(c)){
-        if(c < 0 || c > 127){
+        if(c < 0 || c > MAX_ASCII){
             break;
         }
         if(c == ' '){
@@ -99,15 +101,13 @@ int contractSpaces(std::istream& in, int numSpaces){
     }
     return total;
 }
-
 int countBlankLines(std::istream& in){
     std::string current = "";
     int total = 0;
     bool lastWasNewline = false;
     char c;
-
     while(in.get(c)){
-        if(c < 0 || c > 127){
+        if(c < 0 || c > MAX_ASCII){
             break;
         }
         if(c == '\n'){
@@ -125,7 +125,6 @@ int countBlankLines(std::istream& in){
             else if(isspace(current.front()) || isspace(current.back())){
                 isBad = true;
             }
-
             if(isBad){
                 total++;
             }
@@ -140,7 +139,6 @@ int countBlankLines(std::istream& in){
             lastWasNewline = false;
         }
     }
-
     if(lastWasNewline){
         total++;
     }
@@ -159,7 +157,6 @@ int countBlankLines(std::istream& in){
         else if(isspace(current.front()) || isspace(current.back())){
             isBad = true;
         }
-
         if(isBad){
             total++;
         }
@@ -167,6 +164,5 @@ int countBlankLines(std::istream& in){
             std::cerr << current << std::endl;
         }
     }
-
     return total;
 }
